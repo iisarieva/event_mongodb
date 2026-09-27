@@ -1,4 +1,4 @@
-package database
+package migrate
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func ApplyEventsValidation(
+func eventsValidation(
 	ctx context.Context,
 	db *mongo.Database,
 ) error {
@@ -46,7 +46,6 @@ func ApplyEventsValidation(
 		},
 
 		"oneOf": bson.A{
-			// user_registered
 			bson.M{
 				"properties": bson.M{
 					"event_type": bson.M{
@@ -72,7 +71,6 @@ func ApplyEventsValidation(
 				},
 			},
 
-			// message_sent
 			bson.M{
 				"properties": bson.M{
 					"event_type": bson.M{
@@ -103,7 +101,6 @@ func ApplyEventsValidation(
 				},
 			},
 
-			// payment_completed
 			bson.M{
 				"properties": bson.M{
 					"event_type": bson.M{
@@ -137,35 +134,21 @@ func ApplyEventsValidation(
 	}
 
 	command := bson.D{
-		{
-			Key:   "collMod",
-			Value: "events",
-		},
+		{Key: "collMod", Value: "events"},
 		{
 			Key: "validator",
 			Value: bson.M{
 				"$jsonSchema": schema,
 			},
 		},
-		{
-			Key:   "validationLevel",
-			Value: "strict",
-		},
-		{
-			Key:   "validationAction",
-			Value: "error",
-		},
+		{Key: "validationLevel", Value: "strict"},
+		{Key: "validationAction", Value: "error"},
 	}
 
 	var result bson.M
 
-	if err := db.
-		RunCommand(ctx, command).
-		Decode(&result); err != nil {
-		return fmt.Errorf(
-			"apply events validation: %w",
-			err,
-		)
+	if err := db.RunCommand(ctx, command).Decode(&result); err != nil {
+		return fmt.Errorf("apply events validation: %w", err)
 	}
 
 	return nil

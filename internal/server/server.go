@@ -22,6 +22,7 @@ func New(
 	e.POST("/users", userHandler.Create)
 	e.GET("/users/:id", userHandler.GetByID)
 	e.PATCH("/users/:id", userHandler.Update)
+	e.GET("/users", userHandler.List)
 
 	return e
 }

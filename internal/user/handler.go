@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v5"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -47,6 +48,7 @@ func (h *Handler) Create(c *echo.Context) error {
 		Name:    request.Name,
 		Country: request.Country,
 		Plan:    request.Plan,
+		Tags:    request.Tags,
 	}
 
 	if err := h.repository.Create(
@@ -112,6 +114,10 @@ func (h *Handler) Update(c *echo.Context) error {
 		fields["plan"] = *request.Plan
 	}
 
+	if request.Tags != nil {
+		fields["tags"] = *request.Tags
+	}
+
 	if len(fields) == 0 {
 		return c.JSON(
 			http.StatusBadRequest,
@@ -143,5 +149,28 @@ func (h *Handler) Update(c *echo.Context) error {
 	return c.JSON(
 		http.StatusOK,
 		user,
+	)
+}
+
+func (h *Handler) List(c *echo.Context) error {
+	params := ListOptions{
+		MatchMode: c.QueryParam("match"),
+	}
+
+	if tags := c.QueryParam("tags"); tags != "" {
+		params.Tags = strings.Split(tags, ",")
+	}
+
+	users, err := h.repository.List(
+		c.Request().Context(),
+		params,
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(
+		http.StatusOK,
+		users,
 	)
 }

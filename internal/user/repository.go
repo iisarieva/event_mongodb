@@ -15,6 +15,11 @@ type Repository struct {
 	collection *mongo.Collection
 }
 
+type ListOptions struct {
+	Tags      []string
+	MatchMode string
+}
+
 func NewRepository(collection *mongo.Collection) *Repository {
 	return &Repository{
 		collection: collection,
@@ -88,4 +93,45 @@ func (r *Repository) Update(
 	}
 
 	return r.GetByID(ctx, id)
+}
+
+func (r *Repository) List(
+	ctx context.Context,
+	params ListOptions,
+) ([]User, error) {
+	filter := bson.M{}
+
+	if len(params.Tags) > 0 {
+		switch params.MatchMode {
+		case "all":
+			filter["tags"] = bson.M{
+				"$all": params.Tags,
+			}
+
+		default:
+			filter["tags"] = bson.M{
+				"$in": params.Tags,
+			}
+		}
+	}
+
+	cursor, err := r.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"find users: %w",
+			err,
+		)
+	}
+	defer cursor.Close(ctx)
+
+	var users []User
+
+	if err := cursor.All(ctx, &users); err != nil {
+		return nil, fmt.Errorf(
+			"decode users: %w",
+			err,
+		)
+	}
+
+	return users, nil
 }

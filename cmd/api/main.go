@@ -4,6 +4,7 @@ import (
 	"context"
 	"event_mongodb/internal/database"
 	"event_mongodb/internal/event"
+	"event_mongodb/internal/migrate"
 	"event_mongodb/internal/server"
 	"event_mongodb/internal/user"
 	"log"
@@ -49,23 +50,15 @@ func main() {
 	log.Println("MongoDB connected successfully")
 
 	db := client.Database("eventflow")
-	if err := database.ApplyEventsValidation(
-		ctx,
-		db,
-	); err != nil {
+	if err := migrate.Up(ctx, db); err != nil {
 		log.Fatal(err)
 	}
+	log.Println("database migrations applied")
 
-	log.Println(
-		"MongoDB events validation configured successfully",
-	)
 	eventsCollection := db.Collection("events")
 	usersCollection := db.Collection("users")
 
-	eventRepository := event.NewRepository(
-		eventsCollection,
-	)
-
+	eventRepository := event.NewRepository(eventsCollection)
 	userRepository := user.NewRepository(usersCollection)
 	userHandler := user.NewHandler(userRepository)
 
