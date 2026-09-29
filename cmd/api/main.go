@@ -14,9 +14,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// go run ./cmd/api
-//docker start eventflow-mongodb
-
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("failed to load .env file")
@@ -61,8 +58,17 @@ func main() {
 	eventRepository := event.NewRepository(eventsCollection)
 	userRepository := user.NewRepository(usersCollection)
 	userHandler := user.NewHandler(userRepository)
+	eventService := event.NewService(
+		client,
+		eventRepository,
+		userRepository,
+	)
 
-	eventHandler := event.NewHandler(eventRepository, userRepository)
+	eventHandler := event.NewHandler(
+		eventRepository,
+		eventService,
+		userRepository,
+	)
 
 	e := server.New(eventHandler, userHandler)
 

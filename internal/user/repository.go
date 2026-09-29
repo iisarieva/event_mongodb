@@ -135,3 +135,29 @@ func (r *Repository) List(
 
 	return users, nil
 }
+
+func (r *Repository) IncrementEventsCount(
+	ctx context.Context,
+	userID string,
+) error {
+	result, err := r.collection.UpdateOne(
+		ctx,
+		bson.M{
+			"_id": userID,
+		},
+		bson.M{
+			"$inc": bson.M{
+				"events_count": 1,
+			},
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("increment events_count: %w", err)
+	}
+
+	if result.MatchedCount == 0 {
+		return ErrNotFound
+	}
+
+	return nil
+}

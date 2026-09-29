@@ -13,15 +13,18 @@ import (
 
 type Handler struct {
 	repository     *Repository
+	service        *Service
 	userRepository *user.Repository
 }
 
 func NewHandler(
 	repository *Repository,
+	service *Service,
 	userRepository *user.Repository,
 ) *Handler {
 	return &Handler{
 		repository:     repository,
+		service:        service,
 		userRepository: userRepository,
 	}
 }
@@ -90,7 +93,7 @@ func (h *Handler) Create(c *echo.Context) error {
 		Properties: request.Properties,
 	}
 
-	if err := h.repository.Create(
+	if err := h.service.Create(
 		c.Request().Context(),
 		&event,
 	); err != nil {

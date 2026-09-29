@@ -68,38 +68,31 @@ Pet project на **Go + MongoDB** для практического изучен
 - [ ] Создать multikey index
 
 ### 6. Performance и индексы
-- [ ] Сгенерировать ~10 000 users и ~200 000 events
-- [ ] Выполнить запрос без индекса
-- [ ] Проверить `explain("executionStats")`
-- [ ] Найти `COLLSCAN`
-- [ ] Добавить single-field index
-- [ ] Добавить compound index
-- [ ] Получить `IXSCAN`
-- [ ] Разобраться с ESR: Equality → Sort → Range
-- [ ] Сравнить performance до и после индекса
+- [x] Сгенерировать ~10 000 users и ~200 000 events
+- [x] Выполнить запрос без индекса
+- [x] Проверить `explain("executionStats")`
+- [x] Найти `COLLSCAN`
+- [x] Добавить single-field index
+- [x] Добавить compound index
+- [x] Получить `IXSCAN`
+- [x] Разобраться с ESR: Equality → Sort → Range
+- [x] Сравнить performance до и после индекса
 
 ### 7. Aggregation
-- [ ] Количество событий по типам
-- [ ] Количество сообщений по channel
-- [ ] Количество платежей по plan
-- [ ] Использовать `$match`, `$group`, `$sort`, `$project`
-- [ ] Попробовать `$lookup` между `events` и `users`
+- [x] Количество событий по типам
+- [x] Количество сообщений по channel
+- [x] Количество платежей по plan
+- [x] Использовать `$match`, `$group`, `$sort`, `$project`
+- [x] Попробовать `$lookup` между `events` и `users`
 
 ### 8. Atomicity и transactions
-- [ ] Добавить `events_count` пользователю
-- [ ] Воспроизвести race condition через concurrent goroutines
-- [ ] Исправить через `$inc`
-- [ ] Попробовать MongoDB transaction
-- [ ] Разобраться, когда transaction действительно нужна
+- [x] Добавить `events_count` пользователю
+- [x] Воспроизвести race condition через concurrent goroutines
+- [x] Исправить через `$inc`
+- [x] Попробовать MongoDB transaction
+- [x] Разобраться, когда transaction действительно нужна
 
 ### 9. Дополнительные MongoDB-фичи
-- [ ] TTL index для автоматического удаления старых событий
-- [ ] Сравнить `skip/limit` и cursor pagination
-- [ ] Настроить context и timeouts в Go
-- [ ] Разобраться с connection pool
-
-### 10. Operational basics
-- [ ] Поднять Replica Set локально
-- [ ] Проверить failover при падении Primary
-- [ ] Разобраться с `writeConcern`, `readConcern`, `readPreference`
-- [ ] Разобрать sharding и выбор shard key на уровне design exercise
+- [x] Настроить context и timeouts в Go
+- [x] Разобраться с connection pool
+- [x] Поднять Replica Set локально
